@@ -1,0 +1,21 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+    },
+    "logLevel": {
+      "default": "Information",
+      "AlaskaAir.MileagePlan.OneWorldProfileSync.Function": "Information"
+    }
+  },
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "maxConcurrentCalls": 1
+      }
+    },
+    "queues": {
+      "batchSize": 1
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApplicationName": {
+            "value": "oneworldprofilesync"
+        },
+        "ProductName": {
+            "value": "Retain Mileage Plan"
+        },
+        "Team": {
+            "value": "Spartans"
+        },
+        "teamEmails": {
+            "value": [
+                {
+                    "name": "Spartans",
+                    "emailAddress": "spartans@alaskaair.onmicrosoft.com"
+                }
+            ]
+        },
+        "autoScaleNotification": {
+            "value": "Spartans-Dev@alaskaair.com"
+        },
+        "Contact": {
+            "value": "spartans@alaskaair.onmicrosoft.com"
+        },
+        "Environment": {
+            "value": "qa"
+        },
+        "location": {
+            "value": "westus2"
+        },
+        "SkuName": {
+            "value": "S1"
+        },
+        "NumberOfWorkers": {
+            "value": 1
+        },
+        "StorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "ServiceBusConnectionString": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/994f21e6-3305-452e-9526-8560619aa918/resourceGroups/oneworldprofilesync-qa-group/providers/Microsoft.KeyVault/vaults/oneworldprof-qa-kv"
+                },
+                "secretName": "ServiceBusConnectionString"
+            }
+        },
+        "MemberProfileUpdateQueue": {
+            "value": "as.sb.lcc.memberprofileupdate.queue"
+        },
+        "AmadeusCountQueue": {
+            "value": "as.sb.lcc.amadeuscount.queue"
+        },
+        "amadeusPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/994f21e6-3305-452e-9526-8560619aa918/resourceGroups/oneworldprofilesync-qa-group/providers/Microsoft.KeyVault/vaults/oneworldprof-qa-kv"
+                },
+                "secretName": "amadeusPassword"
+            }
+        },
+        "amadeusBaseUri": {
+            "value": "https://nodeA3.test.webservices.amadeus.com/1ASIWPASASM"
+        },
+        "originator": {
+            "value": "WSASLOY"
+        },
+        "sourceOffice": {
+            "value": "SEAAS18PA"
+        },
+        "wsaTo": {
+            "value": "https://nodeA3.test.webservices.amadeus.com/1ASIWPASASM"
+        }
+    }
+}

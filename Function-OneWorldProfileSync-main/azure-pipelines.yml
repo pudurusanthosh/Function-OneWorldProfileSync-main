@@ -1,0 +1,153 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+  tags:
+    include:
+    - deploy
+  paths:
+    exclude:
+    - README.md
+
+resources:
+  repositories:
+  - repository: self
+  - repository: deployWebApp
+    type: git
+    name: Deployment-Utilities
+    ref: master
+  # Used for SonarQube Build Steps
+  - repository: templates
+    type: git
+    name: SoftwareTransformation/DevOps
+    ref: refs/heads/master
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
+  ProjectKey: 'ecomm_mileageplan-OneWorldProfileSync' 
+  ProjectName: 'ecomm_mileageplan-OneWorldProfileSync' 
+  solution: '**/*.sln'
+  vstsFeed: '03bc935a-9435-422d-91af-4abaa7f58fbd'
+  UnitTestProjectFileName: 'AlaskaAir.MileagePlan.OWProfileSync.Function.UnitTests'
+  appName: oneworldprofilesync
+
+stages:
+  - stage: build
+    displayName: Build
+    jobs:
+      - template: build/NetCoreApp/build.yml@deployWebApp
+        parameters:
+          ProjectKey: 'ecomm_mileageplan-OneWorldProfileSync' 
+          ProjectName: 'ecomm_mileageplan-OneWorldProfileSync'
+          TestProjectFileName: $(UnitTestProjectFileName)
+          vstsFeed: $(vstsFeed)
+          solution: $(solution)
+
+  - stage: Deploy_Test
+    dependsOn: build
+    variables:
+      environmentName: 'test'
+    jobs:
+      - deployment: 
+        environment: 'mileageplan-test'
+        strategy: 
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: drop-repo
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy to test'
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    azureSubscription: '$(appName)-test-group-SPN'
+                    appType: 'functionApp'
+                    WebAppName: '$(appName)-test-func-westus2'
+                    package: '$(Pipeline.Workspace)/**/AlaskaAir.MileagePlan.OneWorldProfileSync.Function.zip'
+
+  ################## INTEGRATION TESTING ######################################
+
+  - stage: Integration_tests
+    dependsOn: Deploy_Test
+    displayName: 'Run Integration tests'
+    jobs:
+      - job: 
+        steps:
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: 'restore'
+              projects: '$(solution)'
+              feedsToUse: 'select'
+              vstsFeed: 'cd2cf343-db16-4269-ae56-fbd82e365e2f/57bf717f-5e24-44c9-ac15-847f09faccff'
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: build
+              projects: '**/*System.Test.csproj'
+          - script: dotnet vstest AlaskaAir.MileagePlan.OneWorldProfileSync.Function/AlaskaAir.MileagePlan.OWProfileSync.Function.System.Test/bin/Debug/netcoreapp3.1/AlaskaAir.MileagePlan.OWProfileSync.Function.System.Test.dll
+            env:
+              ServiceBusConnectionString: $(ServiceBusConnectionString)
+              AmadeusPassword: $(AmadeusPassword)
+
+  ##################### DEPLOY TO QA ################################
+
+  - stage: Deploy_QA
+    displayName: Deploy To QA-Staging
+    dependsOn: Integration_tests
+    variables:
+      environmentName: 'qa'
+    jobs:
+      - deployment:
+        displayName: Deploy 
+        environment: 'mileageplan-qa'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: drop-repo
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy to qa'
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    azureSubscription: '$(appName)-qa-group-SPN'
+                    appType: 'functionApp'
+                    WebAppName: '$(appName)-qa-func-westus2'
+                    package: '$(Pipeline.Workspace)/**/AlaskaAir.MileagePlan.OneWorldProfileSync.Function.zip'
+
+  ##################### DEPLOY TO PROD ################################
+
+  - stage: Deploy_PROD
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    displayName: Deploy To PROD
+    dependsOn: Deploy_QA
+    variables:
+      environmentName: 'prod'
+    jobs:
+      - deployment:
+        displayName: Deploy 
+        environment: 'mileageplan-prod'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: drop-repo
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy to prod'
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    azureSubscription: '$(appName)-prod-group-SPN'
+                    appType: 'functionApp'
+                    WebAppName: '$(appName)-prod-func-westus2'
+                    package: '$(Pipeline.Workspace)/**/AlaskaAir.MileagePlan.OneWorldProfileSync.Function.zip'

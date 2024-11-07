@@ -1,0 +1,135 @@
+trigger:
+  - master
+    
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+- stage: Test_Deployment
+  jobs:
+    - deployment: ARM_Template_Deployment
+      displayName: Deploy ARM Template
+      environment: mileageplan-test
+      variables:
+        environmentName: 'test'
+      strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - task: AzurePowerShell@5
+                inputs:
+                  azureSubscription: 'oneworldprofilesync-test-group-SPN'
+                  ScriptType: 'InlineScript'
+                  Inline: |
+                    $ServiceBusConnectionString = ConvertTo-SecureString -String $env:ServiceBusConnectionString -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name ServiceBusConnectionString -SecretValue $ServiceBusConnectionString -VaultName oneworldprof-test-kv
+
+                    $amadeusPassword = ConvertTo-SecureString -String $env:amadeusPassword -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name amadeusPassword -SecretValue $amadeusPassword -VaultName oneworldprof-test-kv
+                    
+                  azurePowerShellVersion: 'LatestVersion'
+                env:
+                  ServiceBusConnectionString: $(ServiceBusConnectionStringTest)
+                  amadeusPassword: $(amadeusPasswordTest)
+              - task: AzureResourceManagerTemplateDeployment@3
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: 'oneworldprofilesync-test-group-SPN'
+                  subscriptionId: 'b8bbaf52-45da-4230-9095-7059567dc658'
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: 'oneworldprofilesync-test-group'
+                  location: 'West US 2'
+                  templateLocation: 'Linked artifact'
+                  csmFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.json'
+                  csmParametersFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.test.parameters.json'
+                  deploymentMode: 'Incremental'
+                  
+- stage: QA_Deployment
+  jobs:
+    - deployment: ARM_Template_Deployment
+      displayName: Deploy ARM Template
+      environment: mileageplan-qa
+      variables:
+        environmentName: 'qa'
+      strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - task: AzurePowerShell@5
+                inputs:
+                  azureSubscription: 'oneworldprofilesync-qa-group-SPN'
+                  ScriptType: 'InlineScript'
+                  Inline: |
+                    $ServiceBusConnectionString = ConvertTo-SecureString -String $env:ServiceBusConnectionString -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name ServiceBusConnectionString -SecretValue $ServiceBusConnectionString -VaultName oneworldprof-qa-kv
+
+                    $amadeusPassword = ConvertTo-SecureString -String $env:amadeusPassword -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name amadeusPassword -SecretValue $amadeusPassword -VaultName oneworldprof-qa-kv
+                    
+                  azurePowerShellVersion: 'LatestVersion'
+                env:
+                  ServiceBusConnectionString: $(ServiceBusConnectionStringQA)
+                  amadeusPassword: $(amadeusPasswordQA)
+              - task: AzureResourceManagerTemplateDeployment@3
+                displayName: ARM Deployment - QA
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: 'oneworldprofilesync-qa-group-SPN'
+                  subscriptionId: '994f21e6-3305-452e-9526-8560619aa918'
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: 'oneworldprofilesync-qa-group'
+                  location: 'West US 2'
+                  templateLocation: 'Linked artifact'
+                  csmFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.json'
+                  csmParametersFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.qa.parameters.json'
+                  deploymentMode: 'Incremental'
+
+- stage: PROD_Deployment
+  jobs:
+    - deployment: ARM_Template_Deployment
+      displayName: Deploy ARM Template
+      environment: mileageplan-prod
+      variables:
+        environmentName: 'prod'
+      strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - task: AzurePowerShell@5
+                inputs:
+                  azureSubscription: 'oneworldprofilesync-prod-group-SPN'
+                  ScriptType: 'InlineScript'
+                  Inline: |
+                    $ServiceBusConnectionString = ConvertTo-SecureString -String $env:ServiceBusConnectionString -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name ServiceBusConnectionString -SecretValue $ServiceBusConnectionString -VaultName oneworldprof-prod-kv
+
+                    $amadeusPassword = ConvertTo-SecureString -String $env:amadeusPassword -AsPlainText -Force
+                    
+                    Set-AzKeyVaultSecret -Name amadeusPassword -SecretValue $amadeusPassword -VaultName oneworldprof-prod-kv
+                    
+                  azurePowerShellVersion: 'LatestVersion'
+                env:
+                  ServiceBusConnectionString: $(ServiceBusConnectionStringProd)
+                  amadeusPassword: $(amadeusPasswordProd)
+              - task: AzureResourceManagerTemplateDeployment@3
+                displayName: ARM Deployment - Prod
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: 'oneworldprofilesync-prod-group-SPN'
+                  subscriptionId: '33dfa37a-9060-4a9a-b695-22560c5852d7'
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: 'oneworldprofilesync-prod-group'
+                  location: 'West US 2'
+                  templateLocation: 'Linked artifact'
+                  csmFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.json'
+                  csmParametersFile: 'azure_resources\templates\oneworldprofilesync-FunctionApp.prod.parameters.json'
+                  deploymentMode: 'Incremental'
+  

@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlaskaAir.MileagePlan.OneWorldProfileSync.Function", "AlaskaAir.MileagePlan.OneWorldProfileSync.Function\AlaskaAir.MileagePlan.OneWorldProfileSync.Function.csproj", "{76259BF4-32B1-40FB-8046-4DEE52E05F7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlaskaAir.MileagePlan.OneWorldProfileSync.Function.Core", "AlaskaAir.MileagePlan.OneWorldProfileSync.Function.Core\AlaskaAir.MileagePlan.OneWorldProfileSync.Function.Core.csproj", "{A8F47AE7-FF4B-4208-8FF6-A378833FEECD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlaskaAir.MileagePlan.OWProfileSync.Function.UnitTests", "AlaskaAir.MileagePlan.OneWorldProfileSync.Function.UnitTests\AlaskaAir.MileagePlan.OWProfileSync.Function.UnitTests.csproj", "{B542D235-2F3B-475B-8F44-EB63584D666E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlaskaAir.MileagePlan.OWProfileSync.Function.System.Test", "AlaskaAir.MileagePlan.OWProfileSync.Function.System.Test\AlaskaAir.MileagePlan.OWProfileSync.Function.System.Test.csproj", "{D53CF0B6-18E1-4AF0-B1B1-1A5BCAAADE43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmadeusDataTally", "AmadeusDataTally\AmadeusDataTally.csproj", "{B4B9BF6C-3609-4662-8444-E9C88DCD760A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76259BF4-32B1-40FB-8046-4DEE52E05F7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76259BF4-32B1-40FB-8046-4DEE52E05F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76259BF4-32B1-40FB-8046-4DEE52E05F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76259BF4-32B1-40FB-8046-4DEE52E05F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F47AE7-FF4B-4208-8FF6-A378833FEECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F47AE7-FF4B-4208-8FF6-A378833FEECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F47AE7-FF4B-4208-8FF6-A378833FEECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F47AE7-FF4B-4208-8FF6-A378833FEECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B542D235-2F3B-475B-8F44-EB63584D666E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B542D235-2F3B-475B-8F44-EB63584D666E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B542D235-2F3B-475B-8F44-EB63584D666E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B542D235-2F3B-475B-8F44-EB63584D666E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D53CF0B6-18E1-4AF0-B1B1-1A5BCAAADE43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D53CF0B6-18E1-4AF0-B1B1-1A5BCAAADE43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D53CF0B6-18E1-4AF0-B1B1-1A5BCAAADE43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D53CF0B6-18E1-4AF0-B1B1-1A5BCAAADE43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4B9BF6C-3609-4662-8444-E9C88DCD760A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4B9BF6C-3609-4662-8444-E9C88DCD760A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4B9BF6C-3609-4662-8444-E9C88DCD760A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4B9BF6C-3609-4662-8444-E9C88DCD760A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D467116-B0EE-42CA-9FDB-27F4199EB7AE}
+	EndGlobalSection
+EndGlobal

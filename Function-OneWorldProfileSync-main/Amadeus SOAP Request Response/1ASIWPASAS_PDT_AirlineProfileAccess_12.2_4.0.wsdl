@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created with WSDLGenerator 2.0.0 by Amadeus SAS-->
+<!--  Amadeus Proprietary and Confidential Information: unauthorized use and disclosure strictly forbidden. 2015 - Amadeus s.a.s - All Rights Reserved.  -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:amasec="http://xml.amadeus.com/2010/06/Security_v1" xmlns:awsl="http://wsdl.amadeus.com/2010/06/ws/Link_v1" xmlns:awsse="http://xml.amadeus.com/2010/06/Session_v3" xmlns:int="http://wsdl.amadeus.com/AirlineProfileAccess_v12" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://wsdl.amadeus.com/AirlineProfileAccess_v12_v4" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://wsdl.amadeus.com/AirlineProfileAccess_v12_v4" name="ASPAS_AirlineProfileAccess_12.2_4.0">
+  <wsdl:documentation>Versions: [interface: 12.2 ; technical: 4.0]</wsdl:documentation>
+  <wsp:Policy wsu:Id="MessagingPolicy">
+    <wsam:Addressing wsp:Optional="true">
+      <wsp:Policy>
+        <wsam:AnonymousResponses />
+      </wsp:Policy>
+    </wsam:Addressing>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="AmadeusPolicy">
+    <wsp:PolicyReference URI="#MessagingPolicy" />
+  </wsp:Policy>
+  <wsdl:import namespace="http://wsdl.amadeus.com/AirlineProfileAccess_v12" location="AirlineProfileAccess_12.2.wsdl" />
+  <wsdl:types>
+    <xs:schema>
+      <xs:import schemaLocation="AMA/2012B/AMA_WS_Session.xsd" namespace="http://xml.amadeus.com/2010/06/Session_v3" />
+      <xs:import schemaLocation="AMA_WSLink.xsd" namespace="http://wsdl.amadeus.com/2010/06/ws/Link_v1" />
+      <xs:import schemaLocation="AMA/2012B/AMA_SecurityHostedUser.xsd" namespace="http://xml.amadeus.com/2010/06/Security_v1" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="Session_3.000">
+    <wsdl:part name="session" element="awsse:Session" />
+  </wsdl:message>
+  <wsdl:message name="TransactionFlowLink_1.0">
+    <wsdl:part name="link" element="awsl:TransactionFlowLink" />
+  </wsdl:message>
+  <wsdl:message name="AMA_SecurityHostedUser_1.000">
+    <wsdl:part name="security" element="amasec:AMA_SecurityHostedUser" />
+  </wsdl:message>
+  <wsdl:binding name="AirlineProfileAccess_Binding" type="int:AirlineProfileAccess_PT">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Profile_AirlineCreate">
+      <soap:operation soapAction="http://webservices.amadeus.com/Profile_AirlineCreate_12.2" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+        <soap:header message="tns:AMA_SecurityHostedUser_1.000" part="security" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Profile_AirlineDelete">
+      <soap:operation soapAction="http://webservices.amadeus.com/Profile_AirlineDelete_12.2" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+        <soap:header message="tns:AMA_SecurityHostedUser_1.000" part="security" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Profile_AirlineRetrieve">
+      <soap:operation soapAction="http://webservices.amadeus.com/Profile_AirlineRetrieve_12.2" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+        <soap:header message="tns:AMA_SecurityHostedUser_1.000" part="security" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Profile_AirlineUpdate">
+      <soap:operation soapAction="http://webservices.amadeus.com/Profile_AirlineUpdate_12.2" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+        <soap:header message="tns:AMA_SecurityHostedUser_1.000" part="security" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Profile_MileageUpdate">
+      <soap:operation soapAction="http://webservices.amadeus.com/Profile_MileageUpdate_12.2" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+        <soap:header message="tns:AMA_SecurityHostedUser_1.000" part="security" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:Session_3.000" part="session" use="literal" />
+        <soap:header message="tns:TransactionFlowLink_1.0" part="link" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AirlineProfileAccess_Service">
+    <wsdl:port binding="tns:AirlineProfileAccess_Binding" name="AirlineProfileAccess_Port">
+      <wsp:PolicyReference URI="#AmadeusPolicy" />
+      <soap:address location="https://nodeA3.test.webservices.amadeus.com/1ASIWPASAS" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
+<!--1F8B0800000000000000758DCB0AC2301045F7FD8A592AD232098A985D502C42854204D7214E219047498290BF37E8DAF53DE7DC9102255D6C0C50ACA75CB45F0570E4D8E3A9670CAEC9BE7405CEC4612FF008E3FDB1431488DD535D26187F7E4CF0A6945BA6C9030ED89D9DA55040AFABB3E67B20402A9862D5AE54503517F2B099A5DAB6929C21684F0DB1C9D940738A8B75248DA19CBB5B2894166DFEECC038FF002B2214BFC8000000-->

@@ -1,0 +1,335 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApplicationName": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "oneworldprofilesync"
+        },
+        "ProductName": {
+            "type": "string"
+        },
+        "Team": {
+            "type": "string"
+        },
+        "teamEmails": {
+            "minLength": 1,
+            "type": "array",
+            "metadata": {
+                "description": "The email used to send alerts to."
+              }
+          },
+          "autoScaleNotification": {
+            "type": "string",
+            "metadata": {
+                "description": "The email used to send AutoScale Alerts to. *Note* this needs to be a string type."
+            }
+        },
+        "Contact": {
+            "type": "string"
+        },
+        "Environment": {
+            "type": "string",
+            "allowedValues": [
+                "dev",
+                "test",
+                "qa",
+                "prod"
+            ],
+            "metadata": {
+                "description": "Environment type"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westus2",
+            "metadata": {
+                "description": "the location of the resource you need to deploy to."
+            }
+        },
+        "SkuName": {
+            "type": "string",
+            "defaultValue": "F1",
+            "allowedValues": [
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+            ],
+            "metadata": {
+                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+            }
+        },
+        "NumberOfWorkers": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of Workers for web server farm"
+            }
+        },
+        "StorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+              "Standard_LRS",
+              "Standard_GRS",
+              "Standard_RAGRS"
+            ],
+            "metadata": {
+              "description": "Storage Account type"
+            }
+          },
+        "ContainerSASToken": {
+            "type": "secureString", 
+            "defaultValue": "?sv=2018-03-28&ss=b&srt=sco&sp=rl&se=2026-01-01T07:59:59Z&st=2019-03-26T22:50:03Z&spr=https&sig=f1nvDrTugaoqaTYjK70krJm1FAjNPjunxVLIgNoV4UY%3D"
+        },
+        "ServiceBusConnectionString": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Connection string to entrprise service bus"
+            }
+        },
+        "MemberProfileUpdateQueue": {
+            "type": "string",
+            "defaultValue": "as.sb.lcc.memberprofileupdate.queue",
+            "metadata": {
+                "description": "The queue for posting the profile update request."
+            }
+        },
+        "AmadeusCountQueue": {
+            "type": "string",
+            "defaultValue": "as.sb.lcc.amadeuscount.queue",
+            "metadata": {
+                "description": "The queue for holding profiles synched with Amadeus."
+            }
+        },
+        "amadeusPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password to connect to amadeus"
+            }
+        },
+        "amadeusBaseUri": {
+            "type": "string"
+        },
+        "originator": {
+            "type": "string"
+        },
+        "sourceOffice": {
+            "type": "string"
+        },
+        "wsaTo": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "FunctionAppName": "[concat(parameters('ApplicationName'),'-', parameters('Environment'),'-func-',parameters('location'))]",
+        "AppServiceId": "[resourceId('Microsoft.Web/sites', variables('FunctionAppName'))]",
+        "AppServicePlanName": "[toLower(concat(parameters('ApplicationName'),'-', parameters('Environment'),'-plan-',parameters('location')))]",
+        "AppServicePlanId": "[resourceId('Microsoft.Web/serverfarms', variables('AppServicePlanName'))]",
+        "StorageAccountName": "[toLower(concat(uniquestring(resourceGroup().id), 'funcstorage'))]",
+        "templateBaseUrl": "https://linkedarmtemplateprod01.blob.core.windows.net/armtemplates/",
+        "ModernAlertsTemplateUrl": "[concat(variables('templateBaseUrl'), 'ModernAlertsARMTemplate.json')]",
+        "AutoscaleTemplateUrl": "[concat(variables('templateBaseUrl'), 'AutoScaleARMTemplate.json')]",
+        "appInsightsName": "[concat(parameters('ApplicationName'),'-',parameters('Environment'),'-appinsights')]",
+        "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('StorageAccountName')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "kind": "Storage",
+            "sku": {
+              "name": "[parameters('StorageAccountType')]"
+            }
+        },
+        {
+            "name": "[variables('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[parameters('location')]",
+            "apiVersion": "2015-05-01",
+            "dependsOn": [],
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "environment": "[parameters('environment')]",
+                "ProductName": "[parameters('productName')]",
+                "Team": "[parameters('team')]",
+                "Contact": "[parameters('contact')]"
+            },
+            "properties": {
+                "Application_Type": "other",
+                "applicationId": "[variables('appInsightsName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-02-01",
+            "name": "[variables('FunctionAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "tags": {
+                "ApplicationName": "[parameters('ApplicationName')]",
+                "Environment": "[parameters('Environment')]",
+                "ProductName": "[parameters('ProductName')]",
+                "Team": "[parameters('Team')]",
+                "Contact": "[parameters('Contact')]"
+            },
+            "dependsOn": [
+                "[variables('AppServicePlanId')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+            ],
+            "properties": {
+                "name": "[variables('FunctionAppName')]",
+                "serverFarmId": "[variables('AppServicePlanId')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+						},
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2015-05-01-preview').key1,';')]"
+                        },
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2015-05-01-preview').key1,';')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },						
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+							"value": "~3"
+						},
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+						},
+						{
+                            "name": "WEBSITE_CONTENTSHARE",
+							"value": "[toLower(concat(parameters('ApplicationName'),'-',parameters('Environment'),'-func-',parameters('Location')))]"
+                        },
+                        {
+                            "name": "WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT",
+                            "value": "1"
+                        },
+						{
+                            "name": "ServiceBusConnectionString",
+							"value": "[parameters('ServiceBusConnectionString')]"
+                        },
+                        {
+                            "name": "MemberProfileUpdateQueue",
+                            "value": "[parameters('MemberProfileUpdateQueue')]"
+                        },
+                        {
+                            "name": "AmadeusCountQueue",
+                            "value": "[parameters('AmadeusCountQueue')]"
+                        },
+						{
+                            "name": "amadeusPassword",
+                            "value": "[parameters('amadeusPassword')]"
+						},
+						{
+                            "name": "amadeusBaseUri",
+                            "value": "[parameters('amadeusBaseUri')]"
+						},
+						{
+                            "name": "originator",
+                            "value": "[parameters('originator')]"
+						},
+						{
+                            "name": "sourceOffice",
+                            "value": "[parameters('sourceOffice')]"
+						},
+						{
+                            "name": "wsaTo",
+                            "value": "[parameters('wsaTo')]"
+						}
+                    ]
+                }
+            }           
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2016-08-01",
+            "name": "[concat(variables('FunctionAppName'), '/web')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('FunctionAppName'))]"
+            ],
+            "properties": {
+                "alwaysOn": true,
+                "functionAppScaleLimit": 1
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[variables('AppServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "tags": {
+                "ApplicationName": "[parameters('ApplicationName')]",
+                "Environment": "[parameters('Environment')]",
+                "ProductName": "[parameters('ProductName')]",
+                "Team": "[parameters('Team')]",
+                "Contact": "[parameters('Contact')]"
+            },
+            "sku": {
+                "name": "[parameters('SkuName')]"
+            },
+            "properties": {
+                "name": "[variables('AppServicePlanName')]",
+                "numberOfWorkers": "[parameters('NumberOfWorkers')]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "ModernAlertsLinkedTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('ModernAlertsTemplateUrl'),parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "teamEmails": {
+                        "value": "[parameters('teamEmails')]"
+                    },
+                    "ApplicationName": {
+                        "value": "[parameters('ApplicationName')]"
+                    },
+                    "Environment": {
+                        "value": "[parameters('Environment')]"
+                    },
+                    "Location": {
+                        "value": "[parameters('Location')]"
+                    },
+                    "AppServiceId": {
+                        "value": "[variables('AppServiceId')]"
+                    },
+                    "AppServicePlanId": {
+                        "value": "[variables('AppServicePlanId')]"
+                    },
+                    "AppServicePlanName": {
+                        "value": "[variables('AppServicePlanName')]"
+                    }
+                }
+            },
+            "dependsOn": ["[variables('AppServiceId')]"]
+        }
+    ],
+    "outputs": {}
+}

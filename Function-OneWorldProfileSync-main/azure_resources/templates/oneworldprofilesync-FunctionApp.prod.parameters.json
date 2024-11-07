@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApplicationName": {
+            "value": "oneworldprofilesync"
+        },
+        "ProductName": {
+            "value": "Retain Mileage Plan"
+        },
+        "Team": {
+            "value": "Spartans"
+        },
+        "teamEmails": {
+            "value": [
+              {
+                "name": "Spartans",
+                "emailAddress": "spartans-dev@alaskaair.onmicrosoft.com"
+              },
+              {
+                "name": "LCCOnCall",
+                "emailAddress": "ECommerceLoyaltyOnCall@alaskaair.onmicrosoft.com"
+              }
+            ]
+        },
+        "autoScaleNotification": {
+            "value": "Spartans-Dev@alaskaair.com"
+        },
+        "Contact": {
+            "value": "spartans@alaskaair.onmicrosoft.com"
+        },
+        "Environment": {
+            "value": "prod"
+        },
+        "location": {
+            "value": "westus2"
+        },
+        "SkuName": {
+            "value": "S1"
+        },
+        "NumberOfWorkers": {
+            "value": 1
+        },
+        "StorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "ServiceBusConnectionString": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/33dfa37a-9060-4a9a-b695-22560c5852d7/resourceGroups/oneworldprofilesync-prod-group/providers/Microsoft.KeyVault/vaults/oneworldprof-prod-kv"
+                },
+                "secretName": "ServiceBusConnectionString"
+            }
+        },
+        "MemberProfileUpdateQueue": {
+            "value": "as.sb.lcc.memberprofileupdate.queue"
+        },
+        "AmadeusCountQueue": {
+            "value": "as.sb.lcc.amadeuscount.queue"
+        },
+        "amadeusPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/33dfa37a-9060-4a9a-b695-22560c5852d7/resourceGroups/oneworldprofilesync-prod-group/providers/Microsoft.KeyVault/vaults/oneworldprof-prod-kv"
+                },
+                "secretName": "amadeusPassword"
+            }
+        },
+        "amadeusBaseUri": {
+            "value": "https://nodeA3.production.webservices.amadeus.com/1ASIWPASAS"
+        },
+        "originator": {
+            "value": "WSASLOY"
+        },
+        "sourceOffice": {
+            "value": "SEAAS18PA"
+        },
+        "wsaTo": {
+            "value": "https://nodeA3.production.webservices.amadeus.com/1ASIWPASAS"
+        }
+    }
+}
